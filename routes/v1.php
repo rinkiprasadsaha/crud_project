@@ -26,3 +26,6 @@ Route::group(['middleware' => 'api','prefix' => 'category'], function ($router)
     Route::delete('/{id}',[CategoryController::class,'delete_category']);
 
 });
+
+
+

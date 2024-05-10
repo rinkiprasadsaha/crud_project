@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
  use App\Mail\ForgotPasswordMail;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 use Tymon\JWTAuth\Facades\JWTAuth;

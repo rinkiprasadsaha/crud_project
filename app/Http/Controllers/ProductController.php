@@ -11,9 +11,15 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Hash;
+
+use App\Traits\ApiResponse;
+
 
 class ProductController extends Controller
 {
+
+    use ApiResponse;
     /**
      * Validate the class instance.
      *
@@ -43,21 +49,21 @@ class ProductController extends Controller
     }
     public function index()
     {
-        //  $product= Product::all();
-        //  return response()->json($product);
+         $product= Product::all();
+         return response()->json($product);
 
-        // $product = Product::with('category')->get();
-        // $category = Category::with('product')->get();
-        // return response()->json($product,$category);
+        $product = Product::with('category')->get();
+        $category = Category::with('product')->get();
+        return response()->json($product,$category);
 
 
-        $product = DB::table('product')
-            ->join('category', 'product.category_id', '=', 'category.id')
-            ->select('product.*','category.catname')
-            ->get();
-            return response()->json($product);
+    //     $product = DB::table('product')
+    //         ->join('category', 'product.category_id', '=', 'category.id')
+    //         ->select('product.*','category.catname')
+    //         ->get();
+    //         return response()->json($product);
 
-    }
+     }
 
 
     public function archive_product()
@@ -186,9 +192,18 @@ class ProductController extends Controller
 
     public function restore_product($id)
     {
-         $product= Product::withTrashed()->find($id);
-        $product->restore();
-        return response()->json(['message' => 'Record restored successfully']);
+        //  $product= Product::withTrashed()->findOrFail($id)->restore();
 
+        //  if(Product::where('id',$id)->exists()){
+                $product= Product::withTrashed()->find($id)->restore();
+                if(Product::where('id',$id)->exists()){
+                return ApiResponse::successResponse($id);
+            }else{
+                return ApiResponse::errorResponse();
+            }
+
+
+        // return response()->json(['message' => 'Record restored successfully']);
     }
+
 }

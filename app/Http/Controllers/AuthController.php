@@ -45,22 +45,6 @@ class AuthController extends Controller
         return $this->createNewToken($token);
     }
 
-    public function login1(Request $request){
-    	$validator = Validator::make($request->all(), [
-            'email' => 'required|email|email:rfc,dns',
-            'password' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-        $credentials = $request->only('email', 'password');
-        if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'invalid_credentials'], 401);
-        }
-
-        return $this->createNewToken($token);
-    }
-
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',

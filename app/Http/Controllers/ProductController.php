@@ -49,19 +49,19 @@ class ProductController extends Controller
     }
     public function index()
     {
-         $product= Product::all();
-         return response()->json($product);
+        //  $product= Product::all();
+        //  return response()->json($product);
 
-        $product = Product::with('category')->get();
-        $category = Category::with('product')->get();
-        return response()->json($product,$category);
+        // $product = Product::with('category')->get();
+        // $category = Category::with('product')->get();
+        // return response()->json($product,$category);
 
 
-    //     $product = DB::table('product')
-    //         ->join('category', 'product.category_id', '=', 'category.id')
-    //         ->select('product.*','category.catname')
-    //         ->get();
-    //         return response()->json($product);
+        $product = DB::table('product')
+            ->join('category', 'product.category_id', '=', 'category.id')
+            ->select('product.*','category.catname')
+            ->get();
+            return response()->json($product);
 
      }
 

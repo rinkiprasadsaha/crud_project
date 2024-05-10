@@ -3,7 +3,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 
-Route::group(['middleware' => 'api','prefix' => 'product'], function ($router)
+// Route::group(['middleware' => 'api','prefix' => 'product'], function ($router)
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'product'], function ($router)
 {
     Route::get('/',[ProductController::class,'index']);
     Route::get('/archive',[ProductController::class,'archive_product']);
@@ -17,7 +18,7 @@ Route::group(['middleware' => 'api','prefix' => 'product'], function ($router)
 
 });
 
-Route::group(['middleware' => 'api','prefix' => 'category'], function ($router)
+Route::group(['middleware' => 'auth:api','prefix' => 'category'], function ($router)
 {
     Route::get('/',[CategoryController::class,'index']);
     Route::post('/',[CategoryController::class,'create_category']);

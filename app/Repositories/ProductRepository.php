@@ -20,23 +20,22 @@ class ProductRepository implements ProductInterface{
             $sortColumn = $params['sortColumn'];
             $sort = $params['sort'];
             $name = $params['name'];
+
             $offset = $this->get_pagination_offset($params->page, $params->perPage);
-          $product =  Product::select('name','description','category_id');
-
-
+            $product =  Product::select('name','description','category_id');
 
             $product =  $product ->with('category');
 
-
             $product =  $product  ->orderBy($sortColumn, $sort);
+
             $product =  $product ->skip($offset)->take($perPage);
+
             $product =  $product ->where('name', 'like', "%$name%")
                                  ->orWhereHas('category', function($q) use ($name){
                                 $q->where('name','like',"%$name%");
                                 });
 
-
-             $product =  $product->get();
+            $product =  $product->get();
             $product_count = $product->count();
 
 

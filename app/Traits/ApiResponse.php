@@ -18,11 +18,7 @@ trait ApiResponse
      * @return Illuminate\Http\JsonResponse
      */
 
-    // public static function successResponse($id)
-    // {
-    //     $product= Product::find($id);
-    //     return response()->json(['success' => true, 'message' => 'Restore successfully', 'data' => $product], $code= Response::HTTP_OK);
-    // }
+   
 
     public function successResponseIndex($data=[], $message = '',$count='', $code = Response::HTTP_OK)
     {

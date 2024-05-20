@@ -24,6 +24,7 @@ class CategoryRepository implements CategoryInterface{
             $name = $params['name'];
 
             $offset = $this->get_pagination_offset($params->page, $params->perPage);
+
             $category =  Category::withTrashed()->select('name','id');
 
             $category =  $category->with('products');
@@ -33,9 +34,10 @@ class CategoryRepository implements CategoryInterface{
                                     $q->where('name','like',"%$name%");
                                     });
 
-
             $category =  $category->orderby($sortColumn,$sort);
+
             $category =  $category ->skip($offset)->take($perPage);
+
             $category =  $category->get();
             $categorys_count = $category->count();
 
@@ -47,16 +49,7 @@ class CategoryRepository implements CategoryInterface{
         }
     }
 
-        /**
-         * Summary of get_pagination_offset
-         * @param int $per_page
-         * @param int $page
-         * @return int
-         */
-    //    public function get_pagination_offset(int $page, int $per_page)
-    //     {
-    //         return intval(($page - 1) * $per_page);
-    //     }
+     
 
     public function createCategory($params)
     {

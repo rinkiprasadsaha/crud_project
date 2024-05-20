@@ -30,14 +30,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 |
 */
 Route::group(['middleware' => 'api','prefix' => 'auth'], function ($router) {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);
-    Route::post('/forgotPassword', [AuthController::class,'forgotPassword']);
+    $router->post('/login', [AuthController::class, 'login']);
+    $router->post('/register', [AuthController::class, 'register']);
+    $router->post('/logout', [AuthController::class, 'logout']);
+    $router->post('/refresh', [AuthController::class, 'refresh']);
+    $router->get('/user-profile', [AuthController::class, 'userProfile']);
+    $router->post('/forgotPassword', [AuthController::class,'forgotPassword']);
 
-    Route::post('/resetPassword/{token}', [AuthController::class,'resetPassword']);
+    $router->post('/resetPassword/{token}', [AuthController::class,'resetPassword']);
 
 
 });

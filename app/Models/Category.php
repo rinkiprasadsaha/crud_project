@@ -9,18 +9,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    // use SoftDeletes;
+     use SoftDeletes;
     use HasFactory;
 
     protected $table = 'category';
 
     protected $fillable = [
 
-        'catname'
+        'name'
 
       ];
 
       public function products() {
-        return $this->hasMany(Product::class, 'category_id','id');
+        return $this->hasMany(Product::class,'category_id','id')->withTrashed();
     }
 }

@@ -2,29 +2,40 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ItemController;
 
 // Route::group(['middleware' => 'api','prefix' => 'product'], function ($router)
-Route::group(['middleware' => ['auth:api'], 'prefix' => 'product'], function ($router)
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'products'], function ($router)
 {
-    Route::get('/',[ProductController::class,'index']);
-    Route::get('/archive',[ProductController::class,'archive_product']);
-    Route::post('/',[ProductController::class,'create_product']);
-    Route::get('/{id}',[ProductController::class,'show_product']);
-    Route::put('/{id}',[ProductController::class,'update_product']);
-    Route::delete('/{id}',[ProductController::class,'delete_product']);
-    Route::post('/restore/{id}',[ProductController::class,'restore_product']);
 
-    Route::post('/form_request',[ProductController::class,'create']);
+    $router->post('/',[ProductController::class,'createProduct']);
+    $router->get('/',[ProductController::class,'index']);
+    $router->get('/archive',[ProductController::class,'archiveProduct']);
+    $router->get('/{id}',[ProductController::class,'showProduct']);
+    $router->put('/{id}',[ProductController::class,'updateProduct']);
+    $router->delete('/{id}',[ProductController::class,'deleteProduct']);
+    $router->post('/restore/{id}',[ProductController::class,'restoreProduct']);
 
 });
 
 Route::group(['middleware' => 'auth:api','prefix' => 'category'], function ($router)
 {
-    Route::get('/',[CategoryController::class,'index']);
-    Route::post('/',[CategoryController::class,'create_category']);
-    Route::get('/{id}',[CategoryController::class,'show_category']);
-    Route::put('/{id}',[CategoryController::class,'update_category']);
-    Route::delete('/{id}',[CategoryController::class,'delete_category']);
+    $router->get('/',[CategoryController::class,'index']);
+    $router->post('/',[CategoryController::class,'createCategory']);
+    $router->get('/{id}',[CategoryController::class,'showCategory']);
+    $router->put('/{id}',[CategoryController::class,'updateCategory']);
+    $router->delete('/{id}',[CategoryController::class,'deleteCategory']);
+
+});
+
+Route::group(['middleware' => 'auth:api','prefix' => 'item'], function ($router)
+{
+    $router->get('/',[ItemController::class,'index']);
+    $router->post('/',[ItemController::class,'createItem']);
+    $router->get('/{id}',[ItemController::class,'showItem']);
+    $router->put('/{id}',[ItemController::class,'updateItem']);
+    $router->delete('/{id}',[ItemController::class,'deleteItem']);
+    $router->post('/restore/{id}',[ItemController::class,'restoreItem']);
 
 });
 

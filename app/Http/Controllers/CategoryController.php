@@ -1,13 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Requests\CategoryRequest;
 
+use App\Http\Requests\ProductIndexRequest;
 use Illuminate\Http\Request;
 use App\Models\Category;
  use Illuminate\Support\Facades\Validator;
-// use Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
+
+use App\Interfaces\CategoryInterface;
 
 class CategoryController extends Controller
 {
@@ -19,94 +22,47 @@ class CategoryController extends Controller
      * @throws ValidationException
      */
 
-    public function index()
+
+    protected $categoryInterface;
+
+    public function __construct(CategoryInterface $categoryInterface)
     {
-        $category= Category::all();
-        return response()->json($category);
+        $this->categoryInterface = $categoryInterface;
+    }
+
+    public function index(ProductIndexRequest $request)
+    {
+        return $this->categoryInterface->index($request);
 
     }
 
 
 
-    public function create_category(Request $request)
+    public function createCategory(CategoryRequest $request)
     {
-        $validator = Validator::make($request->all(),[
-            'catname' => 'required|max:255'
-        ]);
-
-        if ($validator->fails()){
-             return response()->json([
-                 'success' => false,
-                 'errors' => $validator->errors()
-             ]);
-        }
-
-          $category= Category::create($request->all());
-            return response()->json([
-                "Category"=>$category,"message" => "Category enter sucessfully",
-                'success' => true
-              ]);
-
-
+        return $this->categoryInterface->createCategory($request);
 
     }
 
 
-    public function show_category($id)
+    public function showCategory($id)
     {
-        $category= Category::find($id);
-        if(!empty($category))
-        {
-            return response()->json([
-                "Category"=>$category
-              ]);
-        }
-        else
-        {
-            return response()->json(["message" => "Category not found"]);
-        }
+        return $this->categoryInterface->showCategory($id);
     }
 
 
-    public function update_category(Request $request,$id)
+    public function updateCategory(CategoryRequest $request,$id)
     {
-
-            $validator = Validator::make($request->all(),[
-                'cat_name' => 'required|max:255'
-            ]);
-
-
-        if ($validator->fails()){
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()->toArray()
-            ]);
-       }
-            $category = Category::find($id);
-            $category->update($request->all());
-       return response()->json([
-           "Category"=>$category,"message" => "Category updated sucessfully",
-           'success' => true
-         ]);
-
+        return $this->categoryInterface->updateCategory($request);
     }
 
 
-    public function delete_category($id)
+    public function deleteCategory($id)
     {
-        if(category::where('id',$id)->exists())
-        {
-            $category= Category::find($id);
-
-            $category->delete();
-
-            return response()->json(["message" => "records deleted"]);
-        }
-        else
-        {
-            return response()->json(["message" => "Records not found"]);
-        }
+        return $this->categoryInterface->deleteCategory($id);
     }
+
+    
 
 
 }

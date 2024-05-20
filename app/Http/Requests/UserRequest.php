@@ -1,11 +1,14 @@
 <?php
 
 namespace App\Http\Requests;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProductRequest extends FormRequest
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rules\Password;
+
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,27 +25,15 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => 'required|max:100',
-            'description' => 'required|max:255',
-            'category_id' => 'required|max:255',
+        return  [
+            "name" => "required",
+            "email" => "required|unique:users|regex:/(.+)@(.+)\.(.+)/i",
+            "password" => ['required', Password::min(8)->mixedCase()->numbers()->symbols()]
         ];
     }
 
-    // public function messages()
-    // {
-    //   return [
-    //       'productname.required' => 'Name is required',
-    //       'description.required' => 'description is required',
-    //       'category_id.required' => 'Category id required'
-    //   ];
-    // }
-
-
-protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator)
 {
     throw new HttpResponseException(response()->json($validator->errors(), 422));
 }
-
-
 }

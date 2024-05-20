@@ -5,6 +5,10 @@ namespace App\Http\Middleware;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
 
+use App\Exceptions\Unauthorized;
+use Closure;
+use Illuminate\Contracts\Auth\Factory as Auth;
+
 class Authenticate extends Middleware
 {
     /**
@@ -14,4 +18,13 @@ class Authenticate extends Middleware
     {
         return $request->expectsJson() ? null : route('login');
     }
+
+    // public function handle($request, Closure $next, $guard = null)
+    // {
+    //     if ($this->auth->guard($guard)->guest()) {
+    //         throw new Unauthorized();
+    //     }
+
+    //     return $next($request);
+    // }
 }

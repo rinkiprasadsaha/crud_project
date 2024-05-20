@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('category', function (Blueprint $table) {
             $table->id();
-            $table->string('catname');
+            $table->string('name');
+            $table->softDeletes();
             $table->timestamps();
 
 
@@ -26,5 +27,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('category');
+        $table->softDeletes();
     }
 };

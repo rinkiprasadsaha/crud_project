@@ -18,10 +18,20 @@ trait ApiResponse
      * @return Illuminate\Http\JsonResponse
      */
 
-    public static function successResponse($id)
+    // public static function successResponse($id)
+    // {
+    //     $product= Product::find($id);
+    //     return response()->json(['success' => true, 'message' => 'Restore successfully', 'data' => $product], $code= Response::HTTP_OK);
+    // }
+
+    public function successResponseIndex($data=[], $message = '',$count='', $code = Response::HTTP_OK)
     {
-        $product= Product::find($id);
-        return response()->json(['success' => true, 'message' => 'Restore successfully', 'data' => $product], $code= Response::HTTP_OK);
+        return response()->json(['success'=>true, 'message'=>$message, 'data' => $data,'count'=>$count], $code);
+    }
+
+    public function successResponse($data=[], $message = '', $code = Response::HTTP_OK)
+    {
+        return response()->json(['success'=>true, 'message'=>$message, 'data' => $data], $code);
     }
 
     /**

@@ -6,15 +6,17 @@ use App\Models\User;
 use Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
- use App\Mail\ForgotPasswordMail;
+use App\Mail\ForgotPasswordMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\MailController;
+use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserLoginRequest;
 
-
+use App\Traits\ApiResponse;
 
 class AuthController extends Controller
 {
@@ -23,45 +25,47 @@ class AuthController extends Controller
      *
      * @return void
      */
+
+
     public function __construct() {
-        // $this->middleware('auth:api', ['except' => ['login', 'register']]);
-        // $this->middleware('auth:api')->except('login');
 
     }
 
-    public function login(Request $request){
-    	$validator = Validator::make($request->all(), [
-            'email' => 'required|email|email:rfc,dns',
-            'password' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+    public function login(UserLoginRequest $request){
+    	// $validator = Validator::make($request->all(), [
+        //     'email' => 'required|email|email:rfc,dns',
+        //     'password' => 'required',
+        // ]);
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors());
+        // }
         $credentials = $request->only('email', 'password');
-        if (! $token = auth()->attempt($validator->validated())) {
+        // if (! $token = auth()->attempt($validator->validated())) {
+            if (! $token = auth()->attempt($credentials)){
             return response()->json(['error' => 'invalid_credentials'], 401);
+            // return static::errorResponse(['error' => 'invalid_credentials']);
         }
 
         return $this->createNewToken($token);
     }
 
-    public function register(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:users|email:rfc,dns',
-            'password' =>  ['required', Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised()]
-        ]);
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
-        $user = User::create(array_merge(
-                    $validator->validated(),
-                    ['password' => Hash::make($request->password)]
-                ));
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ]);
+    public function register(UserRequest $request) {
+        // $validator = Validator::make($request->all(), [
+        //     'name' => 'required|string|between:2,100',
+        //     'email' => 'required|string|email|max:100|unique:users|email:rfc,dns',
+        //     'password' =>  ['required', Password::min(8)->mixedCase()->numbers()->symbols()]
+        // ]);
+        // if($validator->fails()){
+        //     return response()->json($validator->errors()->toJson(), 400);
+        // }
+        $requested_data = $request->all();
+        $requested_data['password'] = Hash::make($request->password);
+        $user = User::create($requested_data);
+        // return response()->json([
+        //     'message' => 'User successfully registered',
+        //     'user' => $user
+        // ]);
+        return static::successResponse($user,'User successfully registered');
     }
 
 
@@ -84,12 +88,13 @@ class AuthController extends Controller
 
 
     protected function createNewToken($token){
-        return response()->json([
+        $response = [
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()
-        ]);
+        ];
+        return $response;
     }
 
     public function forgotPassword(Request $request)

@@ -28,7 +28,8 @@ class UserRequest extends FormRequest
         return  [
             "name" => "required",
             "email" => "required|unique:users|regex:/(.+)@(.+)\.(.+)/i",
-            "password" => ['required', Password::min(8)->mixedCase()->numbers()->symbols()]
+            "password" => ['required', Password::min(8)->mixedCase()->numbers()->symbols()],
+            "role"=>"required"
         ];
     }
 

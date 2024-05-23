@@ -5,28 +5,61 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 
 // Route::group(['middleware' => 'api','prefix' => 'product'], function ($router)
-Route::group(['middleware' => ['auth:api'], 'prefix' => 'products'], function ($router)
+Route::group(['middleware' => ['auth:api']], function()
 {
+    Route::group(['middleware' => ['permission:view-products']], function() {
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');;
+    });
 
-    $router->post('/',[ProductController::class,'createProduct']);
-    $router->get('/',[ProductController::class,'index']);
-    $router->get('/archive',[ProductController::class,'archiveProduct']);
-    $router->get('/{id}',[ProductController::class,'showProduct']);
-    $router->put('/{id}',[ProductController::class,'updateProduct']);
-    $router->delete('/{id}',[ProductController::class,'deleteProduct']);
-    $router->post('/restore/{id}',[ProductController::class,'restoreProduct']);
+    Route::group(['middleware' => ['permission:create-products']], function() {
+        Route::post('/products',  [ProductController::class,'createProduct'])->name('products.createProduct');
+    });
+
+    Route::group(['middleware' => ['permission:edit-products']], function() {
+        Route::put('/products/{id}', [ProductController::class,'updateProduct'])->name('products.updateProduct');
+    });
+
+    Route::group(['middleware' => ['permission:delete-products']], function() {
+        Route::delete('/products/{id}', [ProductController::class,'deleteProduct'])->name('products.deleteProduct');
+
+    });
+
+    Route::group(['middleware' => ['permission:show-products-by-id']], function() {
+        Route::get('/products/{id}', [ProductController::class,'showProduct'])->name('products.showProduct');
+
+    });
+
+    Route::group(['middleware' => ['permission:restore-products']], function() {
+        Route::post('/products/restore/{id}', [ProductController::class,'restoreProduct'])->name('products.restoreProduct');
+
+    });
+
 
 });
 
-Route::group(['middleware' => 'auth:api','prefix' => 'category'], function ($router)
+Route::group(['middleware' => ['auth:api']], function()
 {
-    $router->get('/',[CategoryController::class,'index']);
-    $router->post('/',[CategoryController::class,'createCategory']);
-    $router->get('/{id}',[CategoryController::class,'showCategory']);
-    $router->put('/{id}',[CategoryController::class,'updateCategory']);
-    $router->delete('/{id}',[CategoryController::class,'deleteCategory']);
+    Route::group(['middleware' => ['permission:view-categorys']], function() {
+        Route::get('/category', [CategoryController::class, 'index'])->name('categorys.index');;
+    });
+
+    Route::group(['middleware' => ['permission:create-categorys']], function() {
+        Route::post('/category',  [CategoryController::class,'createCategory'])->name('categorys.createProduct');
+    });
+
+    Route::group(['middleware' => ['permission:edit-categorys']], function() {
+        Route::put('/category/{id}', [CategoryController::class,'updateCategory'])->name('categorys.updateCategory');
+    });
+
+    Route::group(['middleware' => ['permission:delete-categorys']], function() {
+        Route::delete('/category/{id}', [CategoryController::class,'deleteCategory'])->name('categorys.deleteCategory');
+
+    });
+
 
 });
+
+
 
 Route::group(['middleware' => 'auth:api','prefix' => 'item'], function ($router)
 {

@@ -31,6 +31,7 @@ class ProductRepository implements ProductInterface{
             $product =  $product ->skip($offset)->take($perPage);
 
             $product =  $product ->where('name', 'like', "%$name%")
+                                //  ->orWhere('description','like',"%$name%")
                                  ->orWhereHas('category', function($q) use ($name){
                                 $q->where('name','like',"%$name%");
                                 });
@@ -42,7 +43,7 @@ class ProductRepository implements ProductInterface{
 
             return static::successResponseIndex($product,'Data Fetch Successfully', $product_count);
         } catch (Exception $e) {
-            return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+            return static::errorResponse(['No Data Found']);
         }
     }
 
@@ -52,7 +53,7 @@ class ProductRepository implements ProductInterface{
             $product =  Product::create($params->all());
             return static::successResponse($product,'Data added successfully',201);
         } catch (Exception $e) {
-            return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+            return static::errorResponse(['No Data Found']);
         }
     }
 
@@ -63,7 +64,7 @@ class ProductRepository implements ProductInterface{
             $product = Product::find($id);
             return static::successResponse($product,'Data fetch successfully',200);
         } catch (Exception $e) {
-            return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+            return static::errorResponse(['No Data Found']);
         }
     }
     public function updateProduct($params,$id)
@@ -74,7 +75,7 @@ class ProductRepository implements ProductInterface{
             $product->update($params->all());
             return static::successResponse($product,'Data updated successfully');
         } catch (Exception $e) {
-           return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+           return static::errorResponse(['No Data Found']);
         }
 
     }
@@ -85,7 +86,7 @@ class ProductRepository implements ProductInterface{
             Product::destroy($id);
             return static::successResponse('No data found','delete successfully');
         } catch (Exception $e) {
-            return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+            return static::errorResponse(['No Data Found']);
         }
     }
 
@@ -98,7 +99,7 @@ class ProductRepository implements ProductInterface{
         // $product= Product::onlyTrashed()->get();
         return static::successResponse($product,'Archive Data');
         }catch (Exception $e) {
-            return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+            return static::errorResponse(['No Data Found']);
         }
     }
 
@@ -111,7 +112,7 @@ class ProductRepository implements ProductInterface{
                 // $product=$this->repository->show($id);
                 return static::successResponse($product,'restore successfully');
             } catch (Exception $e) {
-                return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+                return static::errorResponse(['No Data Found']);
             }
 
     }

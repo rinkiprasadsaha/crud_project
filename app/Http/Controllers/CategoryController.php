@@ -10,10 +10,12 @@ use App\Models\Category;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 
+use App\Traits\ApiResponse;
 use App\Interfaces\CategoryInterface;
 
 class CategoryController extends Controller
 {
+    use ApiResponse;
     /**
      * Validate the class instance.
      *
@@ -31,7 +33,9 @@ class CategoryController extends Controller
     }
 
     public function index(ProductIndexRequest $request)
+
     {
+
         return $this->categoryInterface->index($request);
 
     }
@@ -40,6 +44,10 @@ class CategoryController extends Controller
 
     public function createCategory(CategoryRequest $request)
     {
+        // $role = $request->role;
+        // if ($role == 'user') {
+        //     return static::errorResponse([ "This role has no permission"]);
+        // }
         return $this->categoryInterface->createCategory($request);
 
     }
@@ -62,7 +70,7 @@ class CategoryController extends Controller
         return $this->categoryInterface->deleteCategory($id);
     }
 
-    
+
 
 
 }

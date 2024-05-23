@@ -15,58 +15,55 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\MailController;
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\UserLoginRequest;
+use Spatie\Permission\Models\Role;
+use App\Events\UserRegistered;
 
 use App\Traits\ApiResponse;
 
 class AuthController extends Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
 
+    use ApiResponse;
 
     public function __construct() {
 
     }
 
     public function login(UserLoginRequest $request){
-    	// $validator = Validator::make($request->all(), [
-        //     'email' => 'required|email|email:rfc,dns',
-        //     'password' => 'required',
-        // ]);
-        // if ($validator->fails()) {
-        //     return response()->json($validator->errors());
-        // }
-        $credentials = $request->only('email', 'password');
-        // if (! $token = auth()->attempt($validator->validated())) {
-            if (! $token = auth()->attempt($credentials)){
-            return response()->json(['error' => 'invalid_credentials'], 401);
-            // return static::errorResponse(['error' => 'invalid_credentials']);
-        }
 
-        return $this->createNewToken($token);
+
+        if (!$token = auth()->attempt(["email" => $request->email, "password" => $request->password])) {
+            return static::errorResponse('invalid_credentials');
+        }
+        $user = User::where('email', $request->email)->first();
+        $roles = $this->get_role($user);
+        $response = [
+            "token" => $this->createNewToken($token),
+            "role" => $roles,
+        ];
+        return $response;
+    }
+
+    protected function get_role($user)
+    {
+        return $user->getRoleNames();
     }
 
     public function register(UserRequest $request) {
-        // $validator = Validator::make($request->all(), [
-        //     'name' => 'required|string|between:2,100',
-        //     'email' => 'required|string|email|max:100|unique:users|email:rfc,dns',
-        //     'password' =>  ['required', Password::min(8)->mixedCase()->numbers()->symbols()]
-        // ]);
-        // if($validator->fails()){
-        //     return response()->json($validator->errors()->toJson(), 400);
-        // }
-        $requested_data = $request->all();
-        $requested_data['password'] = Hash::make($request->password);
-        $user = User::create($requested_data);
-        // return response()->json([
-        //     'message' => 'User successfully registered',
-        //     'user' => $user
-        // ]);
+
+    // return $role =Role::where('name','user')->first();
+        $user = $request->all();
+        $user['password'] = Hash::make($request->password);
+        $user = User::create($user);
+        $user->assignRole($request->role);
+
+           // Fire the UserRegistered event
+           event(new UserRegistered($user));
+
         return static::successResponse($user,'User successfully registered');
     }
+
+
 
 
     public function logout() {
@@ -92,9 +89,12 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
+            'user' => auth()->user(),
+            // 'role'=>auth()->user()->getRoleNames(),
+
         ];
-        return $response;
+    //   $response=$response->getRoleNames();
+      return $response;
     }
 
     public function forgotPassword(Request $request)

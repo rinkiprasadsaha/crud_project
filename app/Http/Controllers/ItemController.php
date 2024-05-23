@@ -21,14 +21,8 @@ class ItemController extends Controller
     public function index()
     {
 
-        // $product = DB::table('product')
-        //     ->join('category', 'product.category_id', '=', 'category.id')
-        //     ->select('product.*','category.catname')
-        //     ->get();
 
-        // $product = Product::withTrashed()->select('name','description','category_id')->with('categories')->get();
-        // $items = $this->repository->paginate();
-        $items = $this->repository->get();
+        $items = Item::get();
         return static::successResponse($items,'Data fetch successfully');
     }
 
@@ -36,7 +30,7 @@ class ItemController extends Controller
     {
 
         try {
-            $item = $this->repository->store($request);
+            $item = Item::create($request->all());
             return static::successResponse($item,'Data addes successfully');
         } catch (Exception $e) {
             return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
@@ -49,7 +43,7 @@ class ItemController extends Controller
     {
 
         try {
-            $item = $this->repository->show($id);
+            $item = Item::findOrFail($id);
             return static::successResponse($item,'Data fetch successfully');
         } catch (Exception $e) {
             return static::errorResponse();
@@ -61,7 +55,8 @@ class ItemController extends Controller
     {
 
         try {
-            $item = $this->repository->update($id, $request);
+            $item = Item::findOrFail($id);
+            $item->update($request->all());
             return static::successResponse($item,'Data updated successfully');
         } catch (Exception $e) {
            return static::errorResponse();
@@ -73,22 +68,13 @@ class ItemController extends Controller
     public function deleteItem($id)
     {
         try {
-            $this->repository->delete($id);
+            Item::destroy($id);
             return static::successResponse('No data found','delete successfully');
         } catch (Exception $e) {
             return static::errorResponse();
         }
     }
 
-    public function restoreItem($id)
-    {
-        try {
-            $item = $this->repository->restore($id);
-            $item=$this->repository->show($id);
-            return static::successResponse($item,'restore successfully');
-        } catch (Exception $e) {
-            return static::errorResponse();
-        }
-    }
+
 
 }

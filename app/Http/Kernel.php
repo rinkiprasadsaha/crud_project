@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+
     ];
 
     /**
@@ -67,4 +68,11 @@ class Kernel extends HttpKernel
     'verified_user'       => App\Http\Middleware\CheckVerifiedUserMiddleware::class,
 
     ];
+
+    protected $routeMiddleware = [
+        // Other middleware
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+    ];
+
 }

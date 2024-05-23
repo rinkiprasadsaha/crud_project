@@ -32,6 +32,7 @@ class CategoryRepository implements CategoryInterface{
             $category =  $category  ->where('name', 'like', "%$name%")
                                     ->orWhereHas('products', function($q) use ($name){
                                     $q->where('name','like',"%$name%");
+                                    // ->orWhere('description','like',"%$name%");
                                     });
 
             $category =  $category->orderby($sortColumn,$sort);
@@ -41,15 +42,17 @@ class CategoryRepository implements CategoryInterface{
             $category =  $category->get();
             $categorys_count = $category->count();
 
-            return static::successResponseIndex($category,'Data Fetch Successfully', $categorys_count);
+
+
+            return static::successResponseIndex($category,'Data Fetch Successfully',$categorys_count);
         }catch (Exception $e) {
             Log::error('Error fetching products.', ['message' => $e->getMessage(), 'params' => $params]);
 
-            return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+            return static::errorResponse(['No Data Found']);
         }
     }
 
-     
+
 
     public function createCategory($params)
     {
@@ -57,7 +60,7 @@ class CategoryRepository implements CategoryInterface{
             $category =  Category::create($params->all());
             return static::successResponse($category,'Data added successfully',201);
         }catch (Exception $e) {
-            return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+            return static::errorResponse(['No Data Found']);
         }
     }
 
@@ -68,7 +71,7 @@ class CategoryRepository implements CategoryInterface{
             $category = Category::find($id);
             return static::successResponse($category,'Data fetch successfully',200);
         }catch (Exception $e) {
-            return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+            return static::errorResponse(['No Data Found']);
         }
     }
     public function updateCategory($params)
@@ -79,7 +82,7 @@ class CategoryRepository implements CategoryInterface{
             $category->update($params->all());
             return static::successResponse($category,'Data updated successfully');
         } catch (Exception $e) {
-           return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+           return static::errorResponse(['No Data Found']);
         }
 
     }
@@ -90,7 +93,7 @@ class CategoryRepository implements CategoryInterface{
             Category::destroy($id);
             return static::successResponse('No data found','delete successfully');
         } catch (Exception $e) {
-            return static::errorResponse(['message' => $e->getMessage()], $e->getStatus());
+            return static::errorResponse(['No Data Found']);
         }
     }
 

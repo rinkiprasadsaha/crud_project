@@ -18,9 +18,9 @@ trait ApiResponse
      * @return Illuminate\Http\JsonResponse
      */
 
-   
 
-    public function successResponseIndex($data=[], $message = '',$count='', $code = Response::HTTP_OK)
+
+    public function successResponseIndex($data=[], $message = '',$count='',$user='', $code = Response::HTTP_OK)
     {
         return response()->json(['success'=>true, 'message'=>$message, 'data' => $data,'count'=>$count], $code);
     }
@@ -39,8 +39,8 @@ trait ApiResponse
      * @param  int $code
      * @return Illuminate\Http\JsonResponse
      */
-    public static function errorResponse()
+    public static function errorResponse($message = '')
     {
-        return response()->json(['success' => false, 'message' => "No item found"], $code= Response::HTTP_OK);
+        return response()->json(['success' => false, 'message' => $message], $code= Response::HTTP_OK);
     }
 }

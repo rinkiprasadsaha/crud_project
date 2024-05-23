@@ -5,10 +5,10 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Faker\Factory;
-
-class ProductSeeder extends Seeder
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,11 +16,11 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $faker = Factory::create();
-        DB::table('products')->insert([
-        'name' => $faker->name(),
-        'description' => $faker->text(20),
-        'category_id'=>1
-
+        $user=User::create([
+        'name' => $faker->text(20),
+        'email' => $faker->email(),
+        'password'=>Hash::make('123456'),
         ]);
+        $user->assignRole('admin');
     }
 }
